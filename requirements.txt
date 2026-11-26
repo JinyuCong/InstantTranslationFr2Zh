@@ -1,0 +1,11 @@
+faster-whisper~=1.2.1
+ctranslate2~=4.9.0
+# ctranslate2 4.9 需要 CUDA 12 的 cuBLAS 和 cuDNN 9（Windows 下通过 pip 提供，无需安装 CUDA Toolkit）
+nvidia-cublas-cu12
+nvidia-cudnn-cu12>=9,<10
+PyAudioWPatch>=0.2.12
+soxr>=0.3.7
+numpy
+requests
+PyYAML
+colorama

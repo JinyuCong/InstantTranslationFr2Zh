@@ -1,0 +1,49 @@
+# 法语 → 中文 实时翻译 配置
+# 命令行参数会覆盖这里的设置（python main.py --help 查看）
+
+audio:
+  source: mic              # mic=现场麦克风 | loopback=线上会议(电脑播放的声音) | both=两者 | file=音频文件
+  mic_device: null         # null=系统默认；或填 --list-devices 里的序号 / 名称片段
+  loopback_device: null    # null=系统默认扬声器/耳机
+  file_realtime: true
+
+vad:                       # 断句（语音活动检测）
+  threshold: 0.5
+  min_silence_ms: 600      # 停顿多久算一句话结束。讲话人语速快/停顿少可调小到 400
+  short_silence_ms: 250    # 一句话已经超过 soft_max_s 时，用更短的停顿切开
+  speech_pad_ms: 250
+  min_speech_ms: 300
+  soft_max_s: 12
+  max_segment_s: 25
+
+asr:                       # 语音识别（faster-whisper）
+  model: large-v3-turbo    # large-v3-turbo：快、显存约 1.5 GB | large-v3：略准，显存约 3 GB
+  compute_type: int8_float16
+  device: cuda
+  language: fr
+  beam_size: 5
+  use_context_prompt: true
+  download_dir: models/whisper
+  hf_endpoint: ""          # 下载慢可改为 https://hf-mirror.com
+
+translation:               # 翻译（本地大模型）
+  backend: ollama          # ollama | openai（llama.cpp server / LM Studio / vLLM 等 OpenAI 兼容接口）
+  base_url: http://127.0.0.1:11434
+  model: qwen2.5:7b        # [qwen2.5:7b , translategemma:4b]
+  prompt_style: auto       # auto 会根据模型名选择 chat 或 translategemma 模板
+  temperature: 0.1
+  context_pairs: 4         # 带上前 4 句原文+译文，保证上下文连贯、称呼和术语一致
+  num_ctx: 4096
+  keep_alive: 60m
+  merge_incomplete: true   # 半句话（没有句末标点）先等后半句，合在一起翻译，更准确
+  merge_wait_s: 0.8
+  merge_max_hold_s: 6      # 最多为半句话多等几秒
+  merge_max_chars: 400
+
+output:
+  show_french: true
+  color: true
+  transcript_dir: transcripts   # 每次运行的双语记录保存在这里
+  debug: false
+
+glossary_file: glossary.txt
